@@ -12,7 +12,7 @@ def generate_qr_code(verification_url: str) -> Image.Image:
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_M,
         box_size=5,
-        border=2,
+        border=1,
     )
     qr.add_data(verification_url)
     qr.make(fit=True)
@@ -69,28 +69,28 @@ def draw_gold_emblem(image: Image.Image, center_x: int, center_y: int):
     NAVY = (11, 19, 43)
     CRIMSON = (150, 25, 35)
 
-    # 1. Dual Flowing Silk Ribbons at bottom
+    # 1. Dual Flowing Silk Ribbons at bottom (Ending cleanly at center_y + 125)
     # Left Ribbon
     draw.polygon([
-        (center_x - 30, center_y + 40),
-        (center_x - 70, center_y + 160),
-        (center_x - 45, center_y + 150),
-        (center_x - 20, center_y + 165),
-        (center_x - 10, center_y + 40)
+        (center_x - 25, center_y + 35),
+        (center_x - 55, center_y + 125),
+        (center_x - 38, center_y + 115),
+        (center_x - 20, center_y + 128),
+        (center_x - 8, center_y + 35)
     ], fill=CRIMSON, outline=DARK_GOLD)
 
     # Right Ribbon
     draw.polygon([
-        (center_x + 10, center_y + 40),
-        (center_x + 20, center_y + 165),
-        (center_x + 45, center_y + 150),
-        (center_x + 70, center_y + 160),
-        (center_x + 30, center_y + 40)
+        (center_x + 8, center_y + 35),
+        (center_x + 20, center_y + 128),
+        (center_x + 38, center_y + 115),
+        (center_x + 55, center_y + 125),
+        (center_x + 25, center_y + 35)
     ], fill=CRIMSON, outline=DARK_GOLD)
 
     # 2. Outer Starburst Sunburst Rays (24 points)
-    outer_r = 75
-    inner_r = 65
+    outer_r = 65
+    inner_r = 55
     points = []
     num_pts = 24
     for i in range(num_pts * 2):
@@ -102,14 +102,14 @@ def draw_gold_emblem(image: Image.Image, center_x: int, center_y: int):
     draw.polygon(points, fill=GOLD, outline=DARK_GOLD)
 
     # 3. Concentric Gold Rings
-    draw.ellipse([center_x - 62, center_y - 62, center_x + 62, center_y + 62], fill=LIGHT_GOLD, outline=DARK_GOLD, width=2)
-    draw.ellipse([center_x - 54, center_y - 54, center_x + 54, center_y + 54], fill=GOLD, outline=DARK_GOLD, width=3)
+    draw.ellipse([center_x - 52, center_y - 52, center_x + 52, center_y + 52], fill=LIGHT_GOLD, outline=DARK_GOLD, width=2)
+    draw.ellipse([center_x - 45, center_y - 45, center_x + 45, center_y + 45], fill=GOLD, outline=DARK_GOLD, width=2)
     
     # 4. Deep Navy Center Core
-    draw.ellipse([center_x - 44, center_y - 44, center_x + 44, center_y + 44], fill=NAVY, outline=LIGHT_GOLD, width=2)
+    draw.ellipse([center_x - 36, center_y - 36, center_x + 36, center_y + 36], fill=NAVY, outline=LIGHT_GOLD, width=2)
 
     # 5. Inner Gold Star & Text Ring
-    draw_star(draw, center_x, center_y - 8, r_out=18, r_in=8, color=LIGHT_GOLD)
+    draw_star(draw, center_x, center_y - 6, r_out=14, r_in=6, color=LIGHT_GOLD)
     
     def load_font(size):
         for f in ["arialbd.ttf", "timesbd.ttf", "DejaVuSans-Bold.ttf"]:
@@ -117,7 +117,7 @@ def draw_gold_emblem(image: Image.Image, center_x: int, center_y: int):
             except IOError: continue
         return ImageFont.load_default()
 
-    draw.text((center_x, center_y + 20), "OFFICIAL", font=load_font(12), fill=LIGHT_GOLD, anchor="mm")
+    draw.text((center_x, center_y + 16), "OFFICIAL", font=load_font(10), fill=LIGHT_GOLD, anchor="mm")
 
 def render_certificate(
     cert_id: str,
@@ -131,16 +131,16 @@ def render_certificate(
     output_format: str = "pdf"
 ) -> Path:
     """
-    Renders an ultra-premium executive diploma certificate with high-end typography,
+    Renders an ultra-premium executive diploma certificate with mathematically perfect alignment,
     golden corner filigrees, background guilloché patterns, and embedded verification QR.
     """
     width, height = 2400, 1700
     
-    # 1. Base Luxury Cream Canvas with Subtle Textured Shading
+    # 1. Base Luxury Cream Canvas
     image = Image.new("RGBA", (width, height), "#FAF7F2")
     draw = ImageDraw.Draw(image)
 
-    # Colors Palette
+    # Color Palette
     NAVY = (11, 19, 43)        # Deep Royal Navy
     GOLD = (200, 145, 20)       # Polished Gold
     DARK_GOLD = (150, 100, 10)  # Rich Antique Gold
@@ -187,108 +187,100 @@ def render_certificate(
                 continue
         return ImageFont.load_default()
 
-    font_issuer = get_font(44, is_bold=True)
-    font_header = get_font(72, is_bold=True)
-    font_sub = get_font(34, is_bold=False)
-    font_name = get_font(88, is_bold=True)
-    font_title = get_font(54, is_bold=True)
-    font_custom = get_font(36, is_bold=False)
-    font_meta = get_font(28, is_bold=False)
-    font_sig_name = get_font(30, is_bold=True)
-    font_script = get_font(52, is_script=True)
+    font_issuer = get_font(42, is_bold=True)
+    font_header = get_font(68, is_bold=True)
+    font_sub = get_font(32, is_bold=False)
+    font_name = get_font(84, is_bold=True)
+    font_title = get_font(52, is_bold=True)
+    font_custom = get_font(34, is_bold=False)
+    font_meta = get_font(26, is_bold=False)
+    font_sig_name = get_font(28, is_bold=True)
+    font_script = get_font(50, is_script=True)
 
-    # 6. Render Gold Medallion Emblem at Top Center
-    draw_gold_emblem(image, width // 2, 215)
+    # 6. Render Gold Medallion Emblem at Top Center (Center Y = 200, Ribbon ends at Y = 328)
+    draw_gold_emblem(image, width // 2, 200)
 
-    y_cursor = 370
-
-    # Issuer Name flanked by vector diamonds
-    issuer_text = issuer_name.upper()
-    draw.text((width // 2, y_cursor), issuer_text, font=font_issuer, fill=GOLD, anchor="mm")
+    # 7. Main Vertical Content Layout (With precise spacing!)
     
-    # Calculate issuer text bounds for vector diamond accents
-    iss_bbox = draw.textbbox((width // 2, y_cursor), issuer_text, font=font_issuer, anchor="mm")
+    # Issuer Name (Y = 385, no overlap with medallion ribbon)
+    issuer_text = issuer_name.upper()
+    draw.text((width // 2, 385), issuer_text, font=font_issuer, fill=GOLD, anchor="mm")
+    
+    iss_bbox = draw.textbbox((width // 2, 385), issuer_text, font=font_issuer, anchor="mm")
     iss_w = (iss_bbox[2] - iss_bbox[0]) // 2 + 40
-    draw_diamond(draw, width // 2 - iss_w, y_cursor, size=10, color=GOLD)
-    draw_diamond(draw, width // 2 + iss_w, y_cursor, size=10, color=GOLD)
+    draw_diamond(draw, width // 2 - iss_w, 385, size=10, color=GOLD)
+    draw_diamond(draw, width // 2 + iss_w, 385, size=10, color=GOLD)
 
-    y_cursor += 105
+    # Certificate Title (Y = 475)
+    draw.text((width // 2, 475), "CERTIFICATE OF ACHIEVEMENT", font=font_header, fill=NAVY, anchor="mm")
 
-    # Main Certificate Title
-    draw.text((width // 2, y_cursor), "CERTIFICATE OF ACHIEVEMENT", font=font_header, fill=NAVY, anchor="mm")
-    y_cursor += 85
+    # Center Divider Line (Y = 545)
+    draw.line([(width // 2 - 320, 545), (width // 2 + 320, 545)], fill=GOLD, width=4)
+    draw_diamond(draw, width // 2 - 15, 545, size=10, color=DARK_GOLD)
+    draw_diamond(draw, width // 2 + 15, 545, size=10, color=DARK_GOLD)
 
-    # Ornate Center Divider Line with diamonds
-    draw.line([(width // 2 - 320, y_cursor), (width // 2 + 320, y_cursor)], fill=GOLD, width=4)
-    draw_diamond(draw, width // 2 - 15, y_cursor, size=10, color=DARK_GOLD)
-    draw_diamond(draw, width // 2 + 15, y_cursor, size=10, color=DARK_GOLD)
-    y_cursor += 75
+    # Presentation Context (Y = 620)
+    draw.text((width // 2, 620), "THIS IS TO CERTIFY THAT", font=font_sub, fill=SLATE, anchor="mm")
 
-    # Presentation Context
-    draw.text((width // 2, y_cursor), "THIS IS TO CERTIFY THAT", font=font_sub, fill=SLATE, anchor="mm")
-    y_cursor += 125
-
-    # Recipient Name with Decorative Soft Backdrop Banner
-    name_bbox = draw.textbbox((width // 2, y_cursor), recipient_name, font=font_name, anchor="mm")
-    box_w = (name_bbox[2] - name_bbox[0]) + 120
-    box_h = 130
-    banner_rect = [width // 2 - box_w // 2, y_cursor - box_h // 2, width // 2 + box_w // 2, y_cursor + box_h // 2]
+    # Recipient Name with Centered Banner Box (Y = 740)
+    name_y = 740
+    name_bbox = draw.textbbox((width // 2, name_y), recipient_name, font=font_name, anchor="mm")
+    box_w = max((name_bbox[2] - name_bbox[0]) + 140, 600)
+    box_h = 120
+    banner_rect = [width // 2 - box_w // 2, name_y - box_h // 2, width // 2 + box_w // 2, name_y + box_h // 2]
     draw.rectangle(banner_rect, fill=(255, 253, 245), outline=LIGHT_GOLD, width=2)
     draw.rectangle([banner_rect[0] - 4, banner_rect[1] - 4, banner_rect[2] + 4, banner_rect[3] + 4], outline=GOLD, width=1)
     
-    draw.text((width // 2, y_cursor), recipient_name, font=font_name, fill=NAVY, anchor="mm")
-    y_cursor += 140
+    draw.text((width // 2, name_y), recipient_name, font=font_name, fill=NAVY, anchor="mm")
 
-    # Recognition Detail Line
-    draw.text((width // 2, y_cursor), "has successfully completed all prescribed requirements and masterclass modules for", font=font_sub, fill=SLATE, anchor="mm")
-    y_cursor += 90
+    # Completion Description (Y = 875)
+    draw.text((width // 2, 875), "has successfully completed all prescribed requirements and masterclass modules for", font=font_sub, fill=SLATE, anchor="mm")
 
-    # Course Title
-    draw.text((width // 2, y_cursor), course_title, font=font_title, fill=DARK_GOLD, anchor="mm")
-    y_cursor += 80
+    # Course Title (Y = 965)
+    draw.text((width // 2, 965), course_title, font=font_title, fill=DARK_GOLD, anchor="mm")
 
-    # Custom Note / Grade Text (if present)
+    # Custom Note / Grade (Y = 1045)
     if custom_text:
-        draw.text((width // 2, y_cursor), f"Special Distinction: {custom_text}", font=font_custom, fill=NAVY, anchor="mm")
-        y_cursor += 70
+        draw.text((width // 2, 1045), f"Special Distinction: {custom_text}", font=font_custom, fill=NAVY, anchor="mm")
 
-    # 7. Bottom Section: Left Metadata, Center Signature, Right Verification QR
-    bottom_y = height - 260
+    # 8. Bottom Footer Section (Aligned perfectly on Y = 1350 to Y = 1530)
+    
+    # Left Column: Date & Security Metadata
+    left_x = 180
+    draw.text((left_x, 1360), f"Date of Issue: {issue_date}", font=font_meta, fill=SLATE)
+    draw.text((left_x, 1405), f"Certificate ID: {cert_id}", font=font_meta, fill=NAVY)
+    draw.text((left_x, 1450), "Security Status: [ VERIFIED RECORD ]", font=get_font(22, is_bold=True), fill=ACCENT_RED)
 
-    # Left Column: Date & ID Box
-    draw.text((180, bottom_y), f"Date of Issue: {issue_date}", font=font_meta, fill=SLATE)
-    draw.text((180, bottom_y + 45), f"Certificate ID: {cert_id}", font=font_meta, fill=NAVY)
-    draw.text((180, bottom_y + 85), "Security Status: [ VERIFIED RECORD ]", font=get_font(22, is_bold=True), fill=ACCENT_RED)
-
-    # Center Column: Signature Line & Cursive Script
+    # Center Column: Signature Line & Details
     sig_x = width // 2
     sig_display_name = signatory_name or "Dr. Alex Vance"
     sig_display_title = signatory_title or "Director of Certification"
 
-    # Cursive signature above line
-    draw.text((sig_x, bottom_y - 15), sig_display_name, font=font_script, fill=NAVY, anchor="mm")
+    # Cursive signature above line (Y = 1345)
+    draw.text((sig_x, 1345), sig_display_name, font=font_script, fill=NAVY, anchor="mm")
     
-    # Signature underline with ornamental end loops
-    draw.line([(sig_x - 200, bottom_y + 35), (sig_x + 200, bottom_y + 35)], fill=NAVY, width=3)
-    draw.ellipse([sig_x - 206, bottom_y + 31, sig_x - 194, bottom_y + 39], fill=GOLD)
-    draw.ellipse([sig_x + 194, bottom_y + 31, sig_x + 206, bottom_y + 39], fill=GOLD)
+    # Signature underline (Y = 1395)
+    draw.line([(sig_x - 200, 1395), (sig_x + 200, 1395)], fill=NAVY, width=3)
+    draw.ellipse([sig_x - 206, 1391, sig_x - 194, 1399], fill=GOLD)
+    draw.ellipse([sig_x + 194, 1391, sig_x + 206, 1399], fill=GOLD)
 
-    # Signatory details
-    draw.text((sig_x, bottom_y + 65), sig_display_name, font=font_sig_name, fill=NAVY, anchor="mm")
-    draw.text((sig_x, bottom_y + 100), sig_display_title, font=font_meta, fill=SLATE, anchor="mm")
+    # Signatory details (Y = 1435 and 1470)
+    draw.text((sig_x, 1435), sig_display_name, font=font_sig_name, fill=NAVY, anchor="mm")
+    draw.text((sig_x, 1470), sig_display_title, font=font_meta, fill=SLATE, anchor="mm")
 
-    # Right Column: Framed Verification QR Code
+    # Right Column: QR Verification Card (Y = 1330 to 1530)
     verify_url = f"{settings.BASE_URL}/api/v1/certificates/{cert_id}/verify"
     qr_img = generate_qr_code(verify_url)
     qr_w, qr_h = qr_img.size
-    qr_x, qr_y = width - 360, bottom_y - 45
+    qr_x, qr_y = width - 400, 1330
     
     # Frame card for QR code
-    draw.rectangle([qr_x - 12, qr_y - 12, qr_x + qr_w + 12, qr_y + qr_h + 35], fill=(255, 255, 255), outline=GOLD, width=2)
+    card_padding = 16
+    draw.rectangle([qr_x - card_padding, qr_y - card_padding, qr_x + qr_w + card_padding, qr_y + qr_h + 40], fill=(255, 255, 255), outline=GOLD, width=2)
     image.paste(qr_img, (qr_x, qr_y), qr_img)
-    draw.text((qr_x + qr_w // 2, qr_y + qr_h + 12), "SCAN TO VERIFY", font=get_font(18, is_bold=True), fill=NAVY, anchor="mm")
+    draw.text((qr_x + qr_w // 2, qr_y + qr_h + 16), "SCAN TO VERIFY", font=get_font(18, is_bold=True), fill=NAVY, anchor="mm")
 
-    # 8. Save File (PDF or PNG)
+    # 9. Save File (PDF or PNG)
     output_filename = f"{cert_id}.{output_format.lower()}"
     output_path = settings.OUTPUT_DIR / output_filename
 
