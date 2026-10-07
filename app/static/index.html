@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Certificate Generator - Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Header / Navigation -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">📜</div>
+                <div>
+                    <h1>CertiFlow</h1>
+                    <p class="subtitle">Bulk Certificate Generation & Verification System</p>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="/docs" target="_blank" class="badge-link">API Docs (Swagger)</a>
+                <a href="/redoc" target="_blank" class="badge-link secondary">ReDoc</a>
+            </div>
+        </header>
+
+        <!-- Main Content Layout -->
+        <main class="main-container">
+            <!-- Left Column: Certificate Creation Form -->
+            <section class="card form-card">
+                <div class="card-header">
+                    <h2>Create Certificate Job</h2>
+                    <p>Enter job details and submit recipient list for bulk rendering.</p>
+                </div>
+
+                <form id="jobForm" onsubmit="handleJobSubmit(event)">
+                    <div class="form-group">
+                        <label for="title">Event / Course Title <span class="required">*</span></label>
+                        <input type="text" id="title" placeholder="e.g. Advanced Python & AI Engineering" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issuer">Issuing Organization <span class="required">*</span></label>
+                        <input type="text" id="issuer" placeholder="e.g. DeepMind AI Academy" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="signatory_name">Signatory Name</label>
+                            <input type="text" id="signatory_name" placeholder="e.g. Dr. Alex Vance">
+                        </div>
+                        <div class="form-group">
+                            <label for="signatory_title">Signatory Title</label>
+                            <input type="text" id="signatory_title" placeholder="e.g. Director of Certification">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="issue_date">Issue Date</label>
+                            <input type="text" id="issue_date" placeholder="e.g. October 7, 2026">
+                        </div>
+                        <div class="form-group">
+                            <label for="format">Output Format</label>
+                            <select id="format">
+                                <option value="pdf">PDF Document (.pdf)</option>
+                                <option value="png">PNG Image (.png)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="recipientsText">Recipients Data <span class="required">*</span></label>
+                            <span class="hint">Format: Name, Email, Custom Note (1 per line)</span>
+                        </div>
+                        <textarea id="recipientsText" rows="6" placeholder="Alice Smith, alice@example.com, High Distinction&#10;Bob Jones, bob@example.com, Honors&#10;Charlie Brown, charlie@example.com" required></textarea>
+                        <div class="sample-actions">
+                            <button type="button" class="btn-text" onclick="loadSampleData()">Load Sample Recipients</button>
+                            <button type="button" class="btn-text warning" onclick="loadSampleDataWithErrors()">Load Sample (With Invalid Data Test)</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn-primary">
+                        <span id="btnText">🚀 Start Bulk Generation</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Column: Status & Live Tracker -->
+            <section class="card status-card">
+                <div class="card-header">
+                    <h2>Job Progress & Certificates</h2>
+                    <p>Monitor real-time job processing, errors, and download links.</p>
+                </div>
+
+                <div id="noJobState" class="empty-state">
+                    <div class="empty-icon">⏳</div>
+                    <h3>No Job Selected</h3>
+                    <p>Submit a new certificate generation job or enter an existing Job ID to inspect progress.</p>
+                    <div class="search-job">
+                        <input type="text" id="searchJobId" placeholder="Enter Job ID...">
+                        <button onclick="checkJobById()" class="btn-secondary">Check Job</button>
+                    </div>
+                </div>
+
+                <div id="jobDetailsState" class="job-details hidden">
+                    <div class="job-meta-banner">
+                        <div>
+                            <span id="jobStatusBadge" class="status-badge">PENDING</span>
+                            <h3 id="displayJobTitle">Course Title</h3>
+                            <p id="displayJobMeta">Job ID: ...</p>
+                        </div>
+                        <div id="zipDownloadContainer"></div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-section">
+                        <div class="progress-labels">
+                            <span id="progressText">Progress: 0%</span>
+                            <span id="countsText">0 / 0 Processed</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div id="progressBarFill" class="progress-bar-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-num" id="statTotal">0</span>
+                            <span class="stat-label">Total Recipients</span>
+                        </div>
+                        <div class="stat-box success">
+                            <span class="stat-num" id="statSuccess">0</span>
+                            <span class="stat-label">Success</span>
+                        </div>
+                        <div class="stat-box danger">
+                            <span class="stat-num" id="statFailed">0</span>
+                            <span class="stat-label">Failed</span>
+                        </div>
+                    </div>
+
+                    <!-- Recipients Table -->
+                    <div class="table-container">
+                        <table class="recipients-table">
+                            <thead>
+                                <tr>
+                                    <th>Recipient</th>
+                                    <th>Status</th>
+                                    <th>Details / Download</th>
+                                    <th>Verify</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recipientsTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
